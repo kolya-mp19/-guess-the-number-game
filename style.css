@@ -66,8 +66,9 @@ body {
 
 .cames {
     display: none;
-    width: 360px;
+    width: auto;
     padding: 8% 0 0;
     margin: auto;
     text-align: center;
 }
+
