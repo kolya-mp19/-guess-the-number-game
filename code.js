@@ -1,9 +1,7 @@
-var logicsGame = function(){
-// logics games start
+let logicsGame = function(){
     let randomNamber = Math.round( Math.random() * 100);
     let nameUser = document.getElementById("userName").value;
     console.log(randomNamber);
-    console.log(nameUser);
     let remember = [];
     let objRemember = {};
     document.getElementById("checkButton").addEventListener("click", checkNamber);
@@ -18,49 +16,83 @@ var logicsGame = function(){
                 alert ("Угадали!");
                 document.getElementById("attempts").innerHTML = remember;
                 document.getElementById("checkButton").removeEventListener("click", checkNamber);
-                
+
                 // sessionStorage
-                console.log(nameUser);
-                
-                let rememberString = remember.join();
-                objRemember.item0 = rememberString;
-                let serialObj = JSON.stringify(objRemember);
-                localStorage.setItem(userName.value, serialObj)
-                
+                if (localStorage.length == 0 ) {
+                    objRemember.item1 = remember.join();
+                    let serialObj = JSON.stringify(objRemember);
+                    localStorage.setItem(nameUser, serialObj);                    
+                } else {
+                    for (let i = 0; i < localStorage.length; i++) {
+                        if (localStorage.key(i) === nameUser) {
+                            // нашли объект по ключу и парсим 
+                            let returnObj = JSON.parse(localStorage.getItem(nameUser));
+                            // добавляем к объекту свойство с новыми массивом значений
+                            let key = Object.keys(returnObj).length +1;
+                            let newItem = "item" + key;
+                            returnObj[newItem] = remember.join();
+                            // сериализуем объект и записываем обратно под тем же ключем
+                            let serialObj = JSON.stringify(returnObj);
+                            localStorage.setItem(nameUser, serialObj);
+                            i = localStorage.length;
+                        } else {
+                            objRemember.item1 = remember.join();
+                            let serialObj = JSON.stringify(objRemember);
+                            localStorage.setItem(nameUser, serialObj);
+                            i = localStorage.length;
+                        }
+                    }                    
+                }
             }
         } else {
             alert ("Введите целое положительное число от 0 до 100");
             }
     }
-        // logics games stop
 }
-
 
 
 // first game
 $('.entry').click(function(){
-
-let userName = document.getElementById("userName").value;
-if (userName === "") {
-    alert("Введите свое имя")
-} else {
-    $('.login-page').animate({height: "toggle", opacity: "toggle"}, 500);
-    setTimeout(function(){
-        $(".cames").animate({height: "toggle", opacity: "toggle"}, 500);
-        logicsGame();
-    },500)
-}
+    document.getElementById("inputNumber").value = 50;
+    let userName = document.getElementById("userName").value;
+    if (userName === "") {
+        alert("Введите свое имя")
+    } else {
+        $(".inputUserName").text(userName);
+        $('.login-page').animate({height: "toggle", opacity: "toggle"}, 500);
+        setTimeout(function(){
+            $(".games").animate({height: "toggle", opacity: "toggle"}, 500);
+            logicsGame();
+        },500)
+    }
     return false;
  });
 
 //  Restart
 $(".restart").click(function(){
-    logicsGame();
+    $(".games").animate({height: "toggle", opacity: "toggle"}, 500);
+        setTimeout(function(){
+            document.getElementById("inputNumber").value = 50;
+            $(".games").animate({height: "toggle", opacity: "toggle"}, 500);
+            logicsGame();
+        },500)
     return false;
 });
 
+// Sign out
 $(".signOut").click(function(){
-    $(".cames").animate({height: "toggle", opacity: "toggle"}, 500);
+    $(".games").animate({height: "toggle", opacity: "toggle"}, 500);
+    setTimeout(function(){
+        $('.login-page').animate({height: "toggle", opacity: "toggle"}, 500);
+    },500)
+    return false;
+})
+
+// Удали Вас из LocalStorage
+$(".removeUserName").click(function(){
+    let userName = document.getElementById("userName").value;
+    localStorage.removeItem(userName);
+    $(".games").animate({height: "toggle", opacity: "toggle"}, 500);
     setTimeout(function(){
         $('.login-page').animate({height: "toggle", opacity: "toggle"}, 500);
     },500)
